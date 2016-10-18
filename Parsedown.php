@@ -21,7 +21,7 @@ class Parsedown
 
     # ~
 
-    function text($text)
+    function text($text, $resultAsArray = false)
     {
         # make sure no definitions are set
         $this->DefinitionData = array();
@@ -38,10 +38,11 @@ class Parsedown
         # iterate through lines to identify blocks
         $markup = $this->lines($lines);
 
-        # trim line breaks
-        $markup = trim($markup, "\n");
+        if($resultAsArray){
+            return $markup;
+        }
 
-        return $markup;
+        return join("\n", $markup);
     }
 
     #
@@ -258,7 +259,7 @@ class Parsedown
 
         # ~
 
-        $markup = '';
+        $markup = array();
 
         foreach ($Blocks as $Block)
         {
@@ -267,11 +268,8 @@ class Parsedown
                 continue;
             }
 
-            $markup .= "\n";
-            $markup .= isset($Block['markup']) ? $Block['markup'] : $this->element($Block['element']);
+            $markup[] = isset($Block['markup']) ? $Block['markup'] : $this->element($Block['element']);
         }
-
-        $markup .= "\n";
 
         # ~
 
@@ -1457,7 +1455,7 @@ class Parsedown
 
     protected function li($lines)
     {
-        $markup = $this->lines($lines);
+        $markup = join("\n", $this->lines($lines));
 
         $trimmedMarkup = trim($markup);
 
